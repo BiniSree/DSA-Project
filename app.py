@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request
+import sklearn
 import pickle
+import numpy as np
 
 app = Flask(__name__)
 
@@ -9,6 +11,7 @@ def hello():
 
 @app.route('/prediction', methods = ['GET','POST'])
 def prediction():
+    print('The scikit-learn version is {}.'.format(sklearn.__version__))
     if request.method == 'POST':
         category = request.form['category']
         style = request.form['style']
@@ -20,8 +23,11 @@ def prediction():
         scaler = pickle.load(open('scaler.pkl','rb'))
         Xscaled = scaler.fit_transform([Xencoded])
         model_rf = pickle.load(open('model_rf.pkl','rb'))
-        sales_amount = model_rf.predict([Xscaled])
-    return render_template('prediction.html', sales_amount = sales_amount)
+        sales_amount = model_rf.predict(Xscaled)
+        sales_amount = np.reshape(1,-1)
+        unscaled_amount = scaler.inverse_transform(sales_amount)
+        result = encoder.inverse_transform(unscaled_amount)
+    return render_template('prediction.html', Samount = result)
 
 
     
