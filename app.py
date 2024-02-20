@@ -20,13 +20,13 @@ def prediction():
         qty = request.form['qty']
         encoder = pickle.load(open('encoder.pkl', 'rb'))
         Xencoded =  encoder.fit_transform([category,style,saleschannel,month,qty])
+        print(Xencoded)
         scaler = pickle.load(open('scaler.pkl','rb'))
         Xscaled = scaler.fit_transform([Xencoded])
         model_rf = pickle.load(open('model_rf.pkl','rb'))
         sales_amount = model_rf.predict(Xscaled)
-        sales_amount = np.reshape(1,-1)
-        unscaled_amount = scaler.inverse_transform(sales_amount)
-        result = encoder.inverse_transform(unscaled_amount)
+        result = scaler.inverse_transform(sales_amount)
+        
     return render_template('prediction.html', Samount = result)
 
 
@@ -35,5 +35,5 @@ def prediction():
 
 if __name__ == '__main__':
     app.debug = True
-    app.run(port=15001)
+    app.run(port=15000)
     
