@@ -18,19 +18,20 @@ def prediction():
         saleschannel = request.form['saleschannel']
         month = request.form['month']
         qty = request.form['qty']
-        encoder = pickle.load(open('encoder.pkl', 'rb'))
-        Xencoded =  encoder.fit_transform([category,style,saleschannel,month,qty])
-        print(Xencoded)
-        scaler = pickle.load(open('scaler.pkl','rb'))
-        Xscaled = scaler.fit_transform([Xencoded])
+        encoder1 = pickle.load(open('encoder1.pkl', 'rb'))
+        e_category =  encoder1.transform([category])
+        encoder2 = pickle.load(open('encoder2.pkl', 'rb'))
+        e_style =  encoder2.transform([style])
+        encoder3 = pickle.load(open('encoder3.pkl', 'rb'))
+        e_saleschannel =  encoder3.transform([saleschannel])
+        encoder4 = pickle.load(open('encoder4.pkl', 'rb'))
+        e_month =  encoder4.transform([month])
+        scaler1 = pickle.load(open('scaler1.pkl','rb'))
+        Xscaled = scaler1.transform([[category,style,saleschannel,month,qty]])
         model_rf = pickle.load(open('model_rf.pkl','rb'))
         sales_amount = model_rf.predict(Xscaled)
-        result = scaler.inverse_transform(sales_amount)
-        
-    return render_template('prediction.html', Samount = result)
+    return render_template('prediction.html', sales_amount = sales_amount)
 
-
-    
 
 
 if __name__ == '__main__':
